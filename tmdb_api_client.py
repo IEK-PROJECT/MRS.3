@@ -26,3 +26,29 @@ class TMDbApiClient:
             print(f"Error making API request: {e}")
             return None
 
+def search_movie_id(self, movie_title):
+        search_endpoint = "/search/movie"
+        url = f"{self.base_url}{search_endpoint}"
+
+        params = {
+            'api_key': self.api_key,
+            'language': 'en-US',
+            'query': movie_title,
+            'page': 1
+        }
+
+        try:
+            response = requests.get(url, params=params)
+            response.raise_for_status()
+            results = response.json().get('results', [])
+
+            if results:
+                # Return the ID of the first result (assuming it's the most relevant)
+                return results[0]['id']
+            else:
+                print(f"No results found for movie title: {movie_title}")
+                return None
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error searching for movie ID: {e}")
+            return None
