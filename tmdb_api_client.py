@@ -1,3 +1,4 @@
+# tmdb_api_client.py
 import requests
 
 class TMDbApiClient:
@@ -26,9 +27,27 @@ class TMDbApiClient:
             print(f"Error making API request: {e}")
             return None
 
-def search_movie_id(self, movie_title):
-        search_endpoint = "/search/movie"
-        url = f"{self.base_url}{search_endpoint}"
+    def get_movie_genres(self):
+        endpoint = "/genre/movie/list"
+        url = f"{self.base_url}{endpoint}"
+
+        params = {
+            'api_key': self.api_key,
+            'language': 'en-US',
+        }
+
+        try:
+            response = requests.get(url, params=params)
+            response.raise_for_status()  # Raise an error for bad responses
+            genres = response.json().get('genres', [])
+            return {genre['id']: genre['name'] for genre in genres}
+        except requests.exceptions.RequestException as e:
+            print(f"Error getting movie genres: {e}")
+            return {}
+
+    def search_movie_id(self, movie_title):
+        endpoint = "/search/movie"
+        url = f"{self.base_url}{endpoint}"
 
         params = {
             'api_key': self.api_key,
@@ -52,3 +71,20 @@ def search_movie_id(self, movie_title):
         except requests.exceptions.RequestException as e:
             print(f"Error searching for movie ID: {e}")
             return None
+
+    def get_movie_title(self, movie_id):
+        endpoint = f"/movie/{movie_id}"
+        url = f"{self.base_url}{endpoint}"
+
+        params = {
+            'api_key': self.api_key,
+            'language': 'en-US',
+        }
+
+        try:
+            response = requests.get(url, params=params)
+            response.raise_for_status()
+            return response.json().get('title', '')
+        except requests.exceptions.RequestException as e:
+            print(f"Error getting movie title: {e}")
+            return ''

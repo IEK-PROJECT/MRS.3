@@ -1,28 +1,26 @@
-from tmdb_api_client import TMDbApiClient
-from movie_similarity_comparator import MovieSimilarityComparator
+# main_script.py
+from movie_recommendation import MovieRecommendation
 
 def main():
+    # Replace this with your actual TMDb API key
     api_key = "3ef749f8c526bc42fb7720f376d78327"
 
-    comparator = MovieSimilarityComparator(api_key)
-    
-    # Get user input for two movie titles
-    movie1_title = input("Enter the title of the first movie: ")
-    movie2_title = input("Enter the title of the second movie: ")
+    # Instantiate the MovieRecommendation class
+    movie_recommendation = MovieRecommendation(api_key)
 
-    # Search for movie IDs based on user-inputted titles
-    movie1_id = comparator.tmdb_client.search_movie_id(movie1_title)
-    movie2_id = comparator.tmdb_client.search_movie_id(movie2_title)
+    # Get user input for a movie title
+    movie_title = input("Enter the title of a movie: ")
 
-    if movie1_id is None or movie2_id is None:
-        print("Error: Unable to find movie information.")
-        return
+    # Recommend movies with high similarity scores
+    recommended_movies = movie_recommendation.recommend_movies(movie_title, num_recommendations=10, similarity_threshold=0.9)
 
-    # Compare similarity between the two movies
-    similarity_score = comparator.compare_similarity(movie1_id, movie2_id)
-
-    # Print the results
-    print(f"Similarity score between movies {movie1_title} and {movie2_title}: {similarity_score}")
+    # Print the recommendations
+    if recommended_movies:
+        print(f"\nTop 10 recommended movies based on high similarity to '{movie_title}':")
+        for i, (recommended_movie_title, similarity_score) in enumerate(recommended_movies, start=1):
+            print(f"{i}. {recommended_movie_title} (Similarity: {similarity_score:.4f})")
+    else:
+        print("Unable to provide recommendations.")
 
 if __name__ == "__main__":
     main()
