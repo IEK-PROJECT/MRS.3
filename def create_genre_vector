@@ -1,0 +1,8 @@
+def create_genre_vector(movie, genre_index, genre_id_to_name):
+    vector = [0] * len(genre_index)
+    for genre_id in movie.get('genre_ids', []):
+        genre_name = genre_id_to_name.get(genre_id)
+        if genre_name in genre_index:
+            index = genre_index.index(genre_name)
+            vector[index] = 1
+    return vector
